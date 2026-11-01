@@ -9,7 +9,8 @@ Samsung UE55NU7093UXXH (2018), Tizen 4.0, firmware 1400.2.
 > tuned on the TV without a server. Installation and launch succeeded on the real TV;
 > the user confirmed terrestrial channel playback and channel changes. Earlier 0.6.13 checks
 > confirmed the screen, arrow navigation, app launch with OK and HDMI buttons.
-> Home keeps Samsung's original bar. Open the launcher manually from the app list.
+> Home keeps Samsung's original bar. See the [measured Home-button limitations](docs/NU7093.md#device-checks-on-2026-11-01).
+> Open the launcher manually from the app list.
 > The Q70B results and limitations below belong to the original project.
 > Do not run the `native/` helpers on the NU7093.
 
