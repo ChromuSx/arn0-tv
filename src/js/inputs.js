@@ -70,7 +70,11 @@
             return setSource(src).then(function () {
                 if (method === 'switch') return 'external';
                 if (method === 'inapp') return showFull().then(function () { return 'inapp'; });
-                return openViewer().then(function () { return 'external'; });
+                return openViewer().then(function () { return 'external'; }, function () {
+                    // The source was selected, but a different firmware may lack this viewer id.
+                    // Leave the physical Source key available instead of claiming playback works.
+                    return 'source-selected';
+                });
             });
         });
     }

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets"
-        id="http://arn0.tv/launcher" version="0.6.12" viewmodes="maximized">
+        id="http://arn0.tv/launcher" version="0.6.13" viewmodes="maximized">
     <!-- package must be exactly 10 alphanumeric characters -->
     <!-- KEEP THIS APPLICATION ID STABLE: the TV's Home-button mapping targets it directly.
          Changing it can leave Home pointing to an app ID that is no longer installed. -->
-    <tizen:application id="Arn0Lnchr0.Launcher" package="Arn0Lnchr0" required_version="3.0"/>
+    <tizen:application id="Arn0Lnchr0.Launcher" package="Arn0Lnchr0" required_version="4.0"/>
     <content src="index.html"/>
     <icon src="icon.png"/>
-    <name>Arn0 Launcher</name>
+    <name>Arn0 NU7093</name>
 
     <feature name="http://tizen.org/feature/screen.size.normal.1080.1920"/>
 
@@ -19,8 +19,7 @@
     <tizen:privilege name="http://tizen.org/privilege/internet"/>
     <access origin="*" subdomains="true"/>
 
-    <!-- Lets the TV start the app in the background at power-on so opening it is faster -->
-    <tizen:metadata key="http://samsung.com/tv/metadata/prelaunch.support" value="true"/>
+    <!-- This edition is opened manually. Home and power-on preferences are left to the TV. -->
 
     <tizen:profile name="tv-samsung"/>
     <tizen:setting screen-orientation="landscape" context-menu="disable"

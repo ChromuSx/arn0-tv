@@ -26,6 +26,8 @@
         app('MovistarPl.MovistarPlus', 'Movistar Plus+'),
         app('PlexMedia0.Plex', 'Plex'),
         app('DaznApp000.DAZN', 'DAZN'),
+        app('italian.rai', 'RaiPlay'),
+        app('italian.mediaset', 'Mediaset Infinity'),
         app('RtveTvApp0.RTVEPlay', 'RTVE Play'),
         app('Atresplay0.atresplayer', 'atresplayer'),
         app('org.tizen.browser', 'Internet'),
@@ -38,8 +40,8 @@
     ];
 
     var sources = {
-        connected: [{ type: 'TV', number: 1 }, { type: 'HDMI', number: 2 }, { type: 'HDMI', number: 4 }],
-        disconnected: [{ type: 'HDMI', number: 1 }, { type: 'HDMI', number: 3 }]
+        connected: [{ type: 'TV', number: 1 }, { type: 'HDMI', number: 2 }],
+        disconnected: [{ type: 'HDMI', number: 1 }]
     };
     var currentSource = sources.connected[0];
 
@@ -57,7 +59,8 @@
                 later(ok);
             },
             getCurrentApplication: function () {
-                return { appInfo: { id: 'Arn0Lnchr0.Launcher' }, exit: function () {}, hide: function () {} };
+                return { appInfo: { id: 'Arn0Lnchr0.Launcher' },
+                    exit: function () { window.__MOCK_EXITED__ = true; }, hide: function () {} };
             }
         },
         systeminfo: {

@@ -68,6 +68,17 @@
             if (twoColumn) {
                 list.style.gridTemplateRows =
                     'repeat(' + Math.ceil(list.children.length / 2) + ', auto)';
+                if (document.documentElement.classList.contains('legacy-layout')) {
+                    // Flex columns must have equal-height rows to match columnRows navigation.
+                    list.style.height = '';
+                    var height = 0;
+                    UI.children(list).forEach(function (li) {
+                        li.style.height = '';
+                        height = Math.max(height, li.offsetHeight);
+                    });
+                    UI.children(list).forEach(function (li) { li.style.height = height + 'px'; });
+                    list.style.height = (Math.ceil(list.children.length / 2) * (height + 12)) + 'px';
+                }
             }
         };
         UI.register(name, {
@@ -85,6 +96,10 @@
 
     var opening = false;
     function openSamsungHome() {
+        if (window.LAUNCHER_CONFIG.device && window.LAUNCHER_CONFIG.device.manualLaunchOnly) {
+            Device.exit();
+            return;
+        }
         if (opening) return;
         opening = true;
         DevLog.log('Open Samsung Home');
@@ -110,11 +125,11 @@
         return [
             { label: 'Background', value: wallpaperSummary(), run: function () { UI.show('bg'); } },
             { label: 'Apps on Home', value: Home.homeItems().length + ' apps', run: function () { UI.show('homeapps'); } },
-            { label: 'Consoles', value: shown + ' on Home', run: function () { UI.show('consoles'); } },
+            { label: 'Ingressi HDMI', value: shown + ' on Home', run: function () { UI.show('consoles'); } },
             { label: 'Appearance', value: Appearance.font(a.font).label + ' · ' + (a.clock === '12h' ? '12-hour' : '24-hour'), run: function () { UI.show('appearance'); } },
             { label: 'Navigation sound', value: soundSummary(), run: function () { UI.show('sound-settings'); } },
             { label: 'Screen saver', value: screensaverSummary(), run: function () { UI.show('screensaver-settings'); } },
-            { label: 'Samsung Home', value: 'Smart Hub and TV settings', run: openSamsungHome },
+            { label: 'Chiudi launcher', value: 'Home Samsung sul telecomando', run: openSamsungHome },
             { label: 'Advanced', value: 'Refresh, reset, Lab', run: function () { UI.show('advanced'); } }
         ];
     }
@@ -540,7 +555,7 @@
             },
             {
                 label: 'HDMI port · HDMI ' + c.hdmi, run: function () {
-                    UI.menu('HDMI port', [1, 2, 3, 4].map(function (n) {
+                    UI.menu('HDMI port', (window.LAUNCHER_CONFIG.hdmiPorts || [1, 2, 3, 4]).map(function (n) {
                         return {
                             label: 'HDMI ' + n + (status[n] ? ' · connected' : ''),
                             checked: n === c.hdmi,
@@ -597,7 +612,11 @@
     function addConsole() {
         var used = {};
         Home.inputs().forEach(function (i) { used[i.hdmi] = true; });
-        var port = [1, 2, 3, 4].find(function (n) { return !used[n]; }) || 1;
+        var port = (window.LAUNCHER_CONFIG.hdmiPorts || [1, 2, 3, 4]).find(function (n) { return !used[n]; });
+        if (!port) {
+            UI.toast('Tutti gli ingressi HDMI sono presenti. Modifica o rimuovi uno di quelli esistenti.');
+            return;
+        }
         editInputs(function (l) { l.push({ hdmi: port, label: 'Console', brand: '' }); });
         var index = Home.inputs().length - 1;
         rename('Console', function (name) { editInputs(function (l) { l[index].label = name; }); });
@@ -627,6 +646,14 @@
 
     function advancedEntries() {
         var entries = [
+            {
+                label: 'Compatibilità NU7093', value: 'Leggi le funzioni disponibili', run: function () {
+                    var report = Device.report();
+                    DevLog.log('Compatibilità NU7093', report);
+                    UI.show('lab');
+                    DevLog.log(JSON.stringify(report, null, 2));
+                }
+            },
             {
                 label: 'Refresh app list', value: 'After installing or removing apps', run: function () {
                     UI.toast('Refreshing the app list…');

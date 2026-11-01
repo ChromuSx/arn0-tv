@@ -3,6 +3,7 @@
     'use strict';
 
     var FONTS = [
+        { key: 'system', label: 'Samsung / sistema', family: '"SamsungOne", Arial' },
         { key: 'manrope', label: 'Manrope', family: '"Manrope"' },
         { key: 'inter', label: 'Inter', family: '"Inter"' },
         { key: 'outfit', label: 'Outfit', family: '"Outfit"' },
@@ -10,6 +11,7 @@
     ];
 
     var LOCALES = [
+        { key: 'it-IT', label: 'Italiano' },
         { key: 'en-GB', label: 'English' },
         { key: 'es-ES', label: 'Español' },
         { key: 'fr-FR', label: 'Français' }
@@ -23,7 +25,7 @@
         return FONTS.find(function (f) { return f.key === key; }) || FONTS[0];
     }
 
-    function pad(n) { return String(n).padStart(2, '0'); }
+    function pad(n) { return ('0' + n).slice(-2); }
 
     // Returns { time: '16:05', suffix: '' } or { time: '4:05', suffix: 'PM' }.
     function time(d) {

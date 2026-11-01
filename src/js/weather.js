@@ -38,6 +38,10 @@
 
     // Translated for the same locales as the date, so the corner does not mix languages.
     var LABELS = {
+        'it-IT': {
+            clear: 'Sereno', cloudy: 'Nuvoloso', fog: 'Nebbia', drizzle: 'Pioviggine',
+            rain: 'Pioggia', showers: 'Rovesci', snow: 'Neve', storm: 'Temporale'
+        },
         'en-GB': {
             clear: 'Clear', cloudy: 'Cloudy', fog: 'Fog', drizzle: 'Drizzle',
             rain: 'Rain', showers: 'Showers', snow: 'Snow', storm: 'Thunderstorm'

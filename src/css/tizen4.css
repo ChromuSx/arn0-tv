@@ -1,0 +1,49 @@
+/* Tizen 4 / Chromium 56: avoid variable-font and flex-gap dependencies.
+   Fixed stage stays 1920x1080; the TV scales it to its physical 4K panel. */
+:root { --font: "SamsungOne", Arial, sans-serif; }
+
+/* Grid gap had different names on older engines. */
+.grid { grid-column-gap: 45px; grid-row-gap: 34px; }
+.thumbs { grid-column-gap: 28px; grid-row-gap: 26px; }
+.settings-list.two-col { grid-column-gap: 40px; grid-row-gap: 12px; }
+
+/* Use margins for flex layouts; a CSS.supports('gap') result does not test flex gap. */
+.hints, .hint, .probe-row, .ss-clock, .ss-wx-now { gap: 0; }
+.hint { margin-right: 40px; }
+.hint-key { margin-right: 12px; }
+.probe-tile { margin-right: 36px; flex: none; }
+.ss-clock-main { margin-left: 36px; }
+.ss-wx-icon { margin-right: 14px; }
+
+/* The NU7093 profile uses these predictable layouts even if Grid is reported as supported. */
+.legacy-layout .grid, .legacy-layout .thumbs, .legacy-layout .settings-list.two-col {
+    gap: 0;
+    grid-gap: 0;
+}
+.legacy-layout .grid { display: flex; flex-wrap: wrap; }
+.legacy-layout .grid .app { margin-right: 45px; margin-bottom: 34px; }
+.legacy-layout .grid .app:nth-child(5n) { margin-right: 0; }
+.legacy-layout .thumbs { display: flex; flex-wrap: wrap; }
+.legacy-layout .thumb { flex: 0 0 256px; margin-right: 28px; margin-bottom: 26px; }
+.legacy-layout .thumb:nth-child(6n) { margin-right: 0; }
+.legacy-layout .settings-list.two-col {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: space-between;
+}
+.legacy-layout .two-col .setting-row {
+    box-sizing: border-box;
+    width: 820px;
+    flex: none;
+    margin-bottom: 12px;
+}
+.two-col .setting-label { min-width: 0; }
+.two-col .setting-value { max-width: 48%; margin-left: 16px; }
+
+/* No persistent tile compositor layers or focus zoom on this unmeasured 2018 GPU. */
+.reduced-motion .row-track .tile, .reduced-motion .gear { will-change: auto; }
+.reduced-motion .row-track, .reduced-motion .tile, .reduced-motion .gear,
+.reduced-motion .grid, .reduced-motion .vtrack { transition: none; }
+.reduced-motion .app.focused .tile, .reduced-motion .input.focused .tile,
+.reduced-motion .gear.focused, .reduced-motion .thumb.focused img { transform: none; }

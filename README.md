@@ -1,4 +1,18 @@
-# Arn0 Launcher
+# Arn0 Launcher — Samsung NU7093
+
+Fork di [NelsonEU/arn0-tv](https://github.com/NelsonEU/arn0-tv), adattato e provato su Samsung UE55NU7093UXXH (2018), Tizen 4.0, firmware 1400.2.
+
+> **Edizione NU7093 / Tizen 4.0:** questa copia è adattata al Samsung UE55NU7093UXXH,
+> firmware dichiarato T-KTSUDEUC-1400.2. Leggi **[la guida in italiano](docs/NU7093-IT.md)**.
+> Installazione 0.6.13 e avvio riusciti sul televisore; l'utente ha confermato schermata,
+> frecce e apertura delle app con OK. Home conserva la barra Samsung originale.
+> L'utente ha confermato anche il funzionamento dei pulsanti HDMI. L'app si apre manualmente.
+> I limiti e i risultati del Q70B descritti sotto appartengono al progetto originale.
+> Non eseguire gli helper `native/` sul NU7093.
+
+![Anteprima dell'edizione NU7093](docs/nu7093-preview.png)
+
+*Anteprima su PC con API simulate. Installazione, schermata, telecomando, apertura app e pulsanti HDMI verificati sul televisore reale. Le sezioni seguenti conservano la documentazione del progetto originale.*
 
 A quieter home screen for a Samsung Tizen TV: a clock, a row of your apps, a row of your consoles,
 and nothing else.
@@ -110,7 +124,7 @@ node scripts/prepare-wallpapers.mjs <folder>   # regenerate wallpapers from your
 | --- | --- |
 | Arrows | move (Up from the apps row reaches the gear = Settings) |
 | OK | open app / switch input / select |
-| Back | one level back (does nothing on Home) |
+| Back | one level back; on Home this NU7093 edition offers a confirmation to close the app |
 
 Hidden shortcuts: Red = All apps, Green = next wallpaper, Yellow (in All apps) = show system apps,
 Blue = Lab. On Home, Left and Right alternating three times (◀ ▶ ◀ ▶ ◀ ▶) starts the hidden game;
@@ -124,11 +138,13 @@ accident while sweeping along a row.
 src/                  everything that goes into the .wgt
   config.xml          Tizen manifest (app id, privileges)
   css/style.css       1920x1080 stage; performance rules measured, not assumed (see its header)
+  css/tizen4.css      NU7093 legacy layouts, spacing and reduced navigation motion
   fonts/              Manrope, Inter, Outfit, DM Sans (OFL), bundled so nothing loads from the network
   img/marks/          brand marks (Simple Icons CC0, Custom Brand Icons MIT; see SOURCES.md)
   img/tiles/          marks recoloured per brand (generated at build)
   img/wallpapers/     1920x1080 wallpapers with the readability scrim baked in (generated)
   js/config.js        your apps, consoles, HDMI method, locale, theme
+  js/device.js        NU7093 profile, read-only capability report and public app exit
   js/config.local.js  gitignored per-TV overrides, merged over config.js (not in the repo)
   js/brands.js        tile colours and marks per brand
   js/apps.js          list / filter / launch via tizen.application
@@ -146,7 +162,8 @@ src/                  everything that goes into the .wgt
   js/platform-probe.js  reports which tizen.* / webapis.* APIs the TV exposes (Lab screen only)
   js/boot.js          start-up
   js/tizen-mock.js    fake Tizen APIs for the browser preview (inactive on the TV)
-scripts/              build.sh, serve.mjs, devlog-server.mjs, fetch-assets.mjs, make-icon.mjs
+scripts/              build.mjs / build.py (cross-platform), build.sh wrapper, preview and asset tools
+tests/                ES5 parsing and focused runtime regression checks (npm test)
 native/               guarded Home/startup helpers — read docs/setup-tv.md first
 docs/                 setup guide
 ```

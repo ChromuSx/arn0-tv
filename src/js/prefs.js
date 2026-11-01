@@ -32,7 +32,7 @@
                 clock: '24h',           // '24h' | '12h'
                 showDate: true,
                 locale: cfg.locale || 'en-GB',
-                font: 'manrope',        // see Appearance.FONTS
+                font: cfg.appearance && cfg.appearance.font || 'manrope',
                 names: 'always'         // app names under tiles: 'always' | 'focused' | 'never'
             },
             home: null,                 // [{ id, label, brand }] once edited; null = config.js apps

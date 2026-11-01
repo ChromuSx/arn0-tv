@@ -1,5 +1,9 @@
 # Putting it on a TV
 
+> **NU7093 edition:** use [NU7093-IT.md](NU7093-IT.md) for this checkout.
+> The native procedure below is preserved as upstream reference for its Q70B only.
+> Do not run or weaken those firmware guards on the NU7093.
+
 This guide has two halves. The first installs the launcher as an ordinary web app, which is
 reversible by uninstalling it. The second changes which app the TV treats as Home and starts at
 power-on, which is reversible only if you keep a baseline. Read the second half completely before

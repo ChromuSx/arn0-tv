@@ -2,6 +2,10 @@
 (function () {
     'use strict';
 
+    // The upstream game's personal photos/audio are absent in public builds.
+    // Do not allocate a canvas or request those assets in this TV profile.
+    if (window.LAUNCHER_CONFIG.device && window.LAUNCHER_CONFIG.device.disableGame) return;
+
     var canvas = document.getElementById('runner-canvas');
     var ctx = canvas.getContext('2d');
     var runner = new Image();
@@ -110,7 +114,9 @@
             ctx.fillRect(x, ground + 62 + (i % 3) * 23, 72, 5);
         }
         text('CAMILLE: THE RUNAWAY BRIDE', 120, 125, 28, 'rgba(255,255,255,.72)', 'left', 700);
-        text(String(Math.floor(score)).padStart(5, '0'), 1800, 130, 44, '#fff', 'right', 700);
+        var scoreText = String(Math.floor(score));
+        text(scoreText.length < 5 ? ('00000' + scoreText).slice(-5) : scoreText,
+            1800, 130, 44, '#fff', 'right', 700);
 
         drawCamille(ground - jumpY);
         obstacles.forEach(function (o) {

@@ -48,6 +48,8 @@
     function isConsumer(app) {
         if (PRELOADED.indexOf(app.id) >= 0) return true;
         if (!app.show || INTERNAL.indexOf(app.id) >= 0) return false;
+        // Samsung's preinstalled app ids differ across Tizen generations and regions.
+        if (/^(YouTube|Netflix|Prime Video|Amazon Prime Video|Disney\+|Spotify|RaiPlay|Mediaset Infinity|Mediaset Play|Apple TV)$/i.test(app.name)) return true;
         if (!STORE_ID.test(app.id) && !NUMERIC_ID.test(app.id)) return false;
         return !NOISE.test(app.name + ' ' + app.id);
     }

@@ -101,7 +101,7 @@
             '<rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/>' +
             '<rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg>';
         wrap.appendChild(tile);
-        wrap.appendChild(el('div', 'label', 'All apps'));
+        wrap.appendChild(el('div', 'label', 'Tutte le app'));
         wrap._item = { kind: 'all' };
         return wrap;
     }
@@ -261,6 +261,9 @@
         runLogged('Input HDMI ' + item.hdmi + ' via ' + method, Inputs.open(item.hdmi, method)).then(function (result) {
             log('Current source now: ' + Inputs.describeSource(Inputs.current()));
             if (result === 'inapp') enterTvMode();
+            if (result === 'source-selected') {
+                UI.toast('HDMI ' + item.hdmi + ' selezionato. Premi SOURCE sul telecomando per visualizzarlo.');
+            }
         }).catch(function (err) {
             UI.toast('Could not switch to ' + item.label + ': ' + DevLog.errorText(err));
         });
@@ -398,7 +401,15 @@
 
     function registerKeys() {
         try {
-            tizen.tvinputdevice.registerKeyBatch(['ColorF0Red', 'ColorF1Green', 'ColorF2Yellow', 'ColorF3Blue']);
+            var names = ['ColorF0Red', 'ColorF1Green', 'ColorF2Yellow', 'ColorF3Blue'];
+            if (typeof tizen.tvinputdevice.registerKeyBatch === 'function') {
+                tizen.tvinputdevice.registerKeyBatch(names);
+            } else {
+                names.forEach(function (name) {
+                    try { tizen.tvinputdevice.registerKey(name); }
+                    catch (err) { log('Key ' + name + ' unavailable: ' + DevLog.errorText(err)); }
+                });
+            }
         } catch (e) {
             log('Colour keys unavailable: ' + DevLog.errorText(e));
         }
@@ -418,8 +429,14 @@
                 else if (item.kind === 'input') openInput(item);
                 else if (item.kind === 'settings') UI.show('settings');
             },
-            // Home is the root: Back does nothing.
-            onBack: function () { return true; }
+            // App-only edition: a real Back press can leave it without any Home remapping.
+            onBack: function () {
+                UI.menu('Chiudere il launcher?', [
+                    { label: 'Resta qui' },
+                    { label: 'Chiudi launcher', run: Device.exit }
+                ]);
+                return true;
+            }
         });
         $('gear')._item = { kind: 'settings' };
 

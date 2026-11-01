@@ -13,21 +13,32 @@
  */
 window.LAUNCHER_CONFIG = {
     apps: [
-        { id: 'xvvl3S1TT1.TizenTubeStandalone', label: 'YouTube', brand: 'youtube' },
-        { id: 'rJeHak5zRg.Spotify', label: 'Spotify' },
-        { id: 'Jz7aUrV2Q4.Twitch', label: 'Twitch' },
-        { id: 'E0P3lRI4H7.MYTF1', label: 'TF1+' },
-        { id: 'org.tizen.netflix-app', label: 'Netflix' },
-        { id: 'org.tizen.primevideo', label: 'Prime Video' },
-        { id: 'MCmYXNxgcu.DisneyPlus', label: 'Disney+' },
-        { id: 'com.samsung.tv.aria-video', label: 'Apple TV' }
+        { match: '^YouTube$|cobalt-yt', label: 'YouTube', brand: 'youtube' },
+        { match: '^Netflix$|^org\\.tizen\\.netflix-app$', label: 'Netflix' },
+        { match: '^Prime Video$|^Amazon Prime Video$|^org\\.tizen\\.primevideo$', label: 'Prime Video' },
+        { match: '^Disney\\+?$|DisneyPlus', label: 'Disney+' },
+        { match: '^Spotify$', label: 'Spotify' },
+        { match: '^RaiPlay$', label: 'RaiPlay' },
+        { match: '^Mediaset Infinity$|^Mediaset Play$', label: 'Mediaset Infinity' },
+        { match: '^Apple TV$', label: 'Apple TV' }
     ],
 
     inputs: [
-        { hdmi: 1, label: 'Nintendo Switch 2', brand: 'switch' },
-        { hdmi: 2, label: 'PlayStation 5', brand: 'playstation' },
-        { hdmi: 4, label: 'Xbox Series X', brand: 'xbox' }
+        { hdmi: 1, label: 'HDMI 1', brand: '' },
+        { hdmi: 2, label: 'HDMI 2', brand: '' }
     ],
+
+    hdmiPorts: [1, 2],
+    device: {
+        model: 'UE55NU7093UXXH',
+        expectedFirmware: 'T-KTSUDEUC-1400.2',
+        platform: 'Tizen 4.0',
+        manualLaunchOnly: true,
+        disableGame: true,
+        legacyLayout: true,
+        reducedMotion: true
+    },
+    appearance: { font: 'system' },
 
     // How an input tile switches the TV. See README "HDMI inputs".
     //   'switch+viewer'  set the TV source, then open Samsung's TV viewer (default)
@@ -35,7 +46,7 @@ window.LAUNCHER_CONFIG = {
     //   'inapp'          show the input full screen inside the launcher (Back returns)
     inputMethod: 'switch+viewer',
 
-    locale: 'en-GB',
+    locale: 'it-IT',
 
     theme: {
         // Starting wallpaper (key from js/wallpapers.js), or null for none (plain gradient).
@@ -67,7 +78,7 @@ window.LAUNCHER_CONFIG = {
      * "Sound: report audio latency" in the Lab screen. Set enabled to false to silence it.
      */
     sound: {
-        enabled: true,
+        enabled: false,
         preset: 'soft',
         volume: 0.08,
         minGapMs: 45,
