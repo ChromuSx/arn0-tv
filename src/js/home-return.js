@@ -42,7 +42,7 @@
         if (!state) return 'Checking…';
         if (!state.ready) return state.error || 'Starting…';
         if (!state.monitor.enabled) return 'Off';
-        return Date.now() < state.monitor.pausedUntil ? 'Paused for Samsung Home' : 'On · Home + SOURCE';
+        return Date.now() < state.monitor.pausedUntil ? 'Paused for Samsung Home' : 'On · skips HDMI';
     }
     window.HomeReturn = { init: init, refresh: refresh, toggle: toggle, summary: summary,
         pause: function () { return request('/pause'); } };

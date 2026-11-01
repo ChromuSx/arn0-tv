@@ -15,6 +15,10 @@ Samsung UE55NU7093UXXH (2018), Tizen 4.0, firmware 1400.2.
 > behavior and the two-minute Samsung-menu escape. See the [Home controls and reboot
 > status](docs/NU7093.md#home-and-source-in-version-0615). Home also passed a full-reboot test
 > with the PC developer connection closed. Version 0.6.16 fixes rapid repeat presses and status refresh.
+> Version 0.6.17 adds **native HDMI protection**: Samsung Home/SOURCE remain original
+> while watching HDMI, preventing Fire Stick CEC-triggered Hub events from opening Arn0.
+> HDMI protection and Home return from terrestrial TV were verified with the service enabled.
+> See the [HDMI behavior and measured limits](docs/NU7093.md#native-hdmi-protection-in-version-0617).
 > The Q70B results and limitations below belong to the original project.
 > Do not run the `native/` helpers on the NU7093.
 

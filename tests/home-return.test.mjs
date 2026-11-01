@@ -75,6 +75,38 @@ test('a second Home press during cooldown is deferred rather than lost', () => {
     assert.equal(launches, 2); // Do not require the user to close and reopen this bar again.
 });
 
+test('native HDMI Home and CEC Hub contexts never launch Arn0', () => {
+    let launches = 0;
+    const monitor = new Monitor(ok => { launches++; ok(); });
+    monitor.enable(true);
+    monitor.sample(reply(0x40020), 1000); // A prior clear reading must not leak into HDMI.
+    for (let at = 2000; at <= 12000; at += 1000) {
+        monitor.sample(reply(at % 3000 === 0 ? 0x40013 : 0x40103), at);
+    }
+    assert.equal(launches, 0);
+    assert.equal(monitor.state.hdmiProtected, true);
+    // Changing sources with the same open bar must not count as another Home press.
+    monitor.sample(reply(0x40101), 13000);
+    monitor.sample(reply(0x40101), 14000);
+    assert.equal(launches, 0);
+    monitor.sample(reply(0x40001), 15000);
+    monitor.sample(reply(0x40101), 16000);
+    monitor.sample(reply(0x40101), 17000);
+    assert.equal(launches, 1);
+    assert.equal(monitor.state.hdmiProtected, false);
+});
+
+test('foreground web apps retain Home return with an HDMI context underneath', () => {
+    let launches = 0;
+    const monitor = new Monitor(ok => { launches++; ok(); });
+    monitor.enable(true);
+    monitor.sample(reply(0x40022), 1000);
+    monitor.sample(reply(0x40122), 2000);
+    monitor.sample(reply(0x40122), 3000);
+    assert.equal(launches, 1);
+    assert.equal(monitor.state.hdmiProtected, false);
+});
+
 function client() {
     const requests = [], timers = [], events = [];
     function XMLHttpRequest() { requests.push(this); }
@@ -117,6 +149,20 @@ test('client startup queries status even when launch of an already-running servi
     assert.ok(t.timers.length > 0);
     t.timers[0]();
     assert.equal(t.requests[0].path, '/status');
+});
+
+test('settings summary describes the enabled HDMI exclusion policy, not a live input state', async () => {
+    const t = client();
+    for (const hdmiProtected of [false, true]) {
+        const reading = t.c.HomeReturn.refresh();
+        t.respond(t.requests.at(-1), { ready: true, monitor: { enabled: true, pausedUntil: 0, hdmiProtected } });
+        await reading;
+        assert.equal(t.c.HomeReturn.summary(), 'On · skips HDMI');
+    }
+    const reading = t.c.HomeReturn.refresh();
+    t.respond(t.requests.at(-1), { ready: true, monitor: { enabled: true, pausedUntil: Date.now() + 120000, hdmiProtected: false } });
+    await reading;
+    assert.equal(t.c.HomeReturn.summary(), 'Paused for Samsung Home');
 });
 
 test('client closes the app even when the pause endpoint fails', async () => {

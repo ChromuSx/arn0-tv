@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets"
-        id="http://arn0.tv/launcher" version="0.6.16" viewmodes="maximized">
+        id="http://arn0.tv/launcher" version="0.6.17" viewmodes="maximized">
     <!-- package must be exactly 10 alphanumeric characters -->
     <!-- Keep this ID stable for installed preferences and the TV-local Home service. -->
     <tizen:application id="Arn0Lnchr0.Launcher" package="Arn0Lnchr0" required_version="4.0"/>
