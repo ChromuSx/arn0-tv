@@ -1,18 +1,23 @@
-# Arn0 Launcher — Samsung NU7093
+# Arn0 Launcher - Samsung NU7093
 
-Fork di [NelsonEU/arn0-tv](https://github.com/NelsonEU/arn0-tv), adattato e provato su Samsung UE55NU7093UXXH (2018), Tizen 4.0, firmware 1400.2.
+Fork of [NelsonEU/arn0-tv](https://github.com/NelsonEU/arn0-tv), adapted and tested on the
+Samsung UE55NU7093UXXH (2018), Tizen 4.0, firmware 1400.2.
 
-> **Edizione NU7093 / Tizen 4.0:** questa copia è adattata al Samsung UE55NU7093UXXH,
-> firmware dichiarato T-KTSUDEUC-1400.2. Leggi **[la guida in italiano](docs/NU7093-IT.md)**.
-> Installazione 0.6.13 e avvio riusciti sul televisore; l'utente ha confermato schermata,
-> frecce e apertura delle app con OK. Home conserva la barra Samsung originale.
-> L'utente ha confermato anche il funzionamento dei pulsanti HDMI. L'app si apre manualmente.
-> I limiti e i risultati del Q70B descritti sotto appartengono al progetto originale.
-> Non eseguire gli helper `native/` sul NU7093.
+> **NU7093 / Tizen 4.0 edition:** this checkout targets the Samsung UE55NU7093UXXH,
+> with user-reported firmware T-KTSUDEUC-1400.2. Read the **[NU7093 guide](docs/NU7093.md)**.
+> Version 0.6.14 adds a **live TV shortcut** alongside HDMI inputs, opening channels already
+> tuned on the TV without a server. Installation and launch succeeded on the real TV;
+> the user confirmed terrestrial channel playback and channel changes. Earlier 0.6.13 checks
+> confirmed the screen, arrow navigation, app launch with OK and HDMI buttons.
+> Home keeps Samsung's original bar. Open the launcher manually from the app list.
+> The Q70B results and limitations below belong to the original project.
+> Do not run the `native/` helpers on the NU7093.
 
-![Anteprima dell'edizione NU7093](docs/nu7093-preview.png)
+![NU7093 edition preview](docs/nu7093-preview.png)
 
-*Anteprima su PC con API simulate. Installazione, schermata, telecomando, apertura app e pulsanti HDMI verificati sul televisore reale. Le sezioni seguenti conservano la documentazione del progetto originale.*
+*PC preview with simulated APIs. The screen, remote, app launch and HDMI were verified on the
+real TV in 0.6.13; live TV and channel changes were also verified in 0.6.14. The following
+sections retain the original project's documentation.*
 
 A quieter home screen for a Samsung Tizen TV: a clock, a row of your apps, a row of your consoles,
 and nothing else.

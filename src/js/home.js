@@ -107,21 +107,35 @@
     }
 
     function inputTile(input) {
-        var brand = findBrand(input.brand || '') || { bg: '#2a2f3a', fg: '#fff', mark: null };
+        var live = input.type === 'TV';
+        var brand = live ? { bg: '#173e50', fg: '#fff', mark: null }
+            : findBrand(input.brand || '') || { bg: '#2a2f3a', fg: '#fff', mark: null };
         var wrap = el('div', 'input');
         var tile = el('div', 'tile');
         tile.style.background = brand.bg;
         if (brand.mark) tile.appendChild(markEl(brand));
+        if (live) {
+            var icon = el('div', 'mark');
+            icon.innerHTML = '<svg width="80" height="80" viewBox="0 0 48 48" fill="none" ' +
+                'stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+                '<rect x="5" y="10" width="38" height="27" rx="4"/>' +
+                '<path d="M16 44h16M24 37v7M17 3l7 7 7-7"/></svg>';
+            tile.appendChild(icon);
+        }
         var meta = el('div', 'meta');
         meta.appendChild(el('div', 'name', input.label));
         var port = el('div', 'port');
-        var dot = el('span', 'dot');
-        port.appendChild(dot);
-        port.appendChild(document.createTextNode('HDMI ' + input.hdmi));
+        var dot = null;
+        if (!live) {
+            dot = el('span', 'dot');
+            port.appendChild(dot);
+        }
+        port.appendChild(document.createTextNode(live ? 'Digitale terrestre' : 'HDMI ' + input.hdmi));
         meta.appendChild(port);
         tile.appendChild(meta);
         wrap.appendChild(tile);
-        wrap._item = { kind: 'input', hdmi: input.hdmi, label: input.label, method: input.method };
+        wrap._item = live ? { kind: 'live-tv', label: input.label }
+            : { kind: 'input', hdmi: input.hdmi, label: input.label, method: input.method };
         wrap._dot = dot;
         return wrap;
     }
@@ -174,6 +188,9 @@
 
         var row2 = $('inputs-row');
         row2.innerHTML = '';
+        if (cfg.liveTv !== false) {
+            row2.appendChild(inputTile({ type: 'TV', label: cfg.liveTv && cfg.liveTv.label || 'TV in diretta' }));
+        }
         inputs().forEach(function (input) {
             if (!input.hidden) row2.appendChild(inputTile(input));
         });
@@ -184,7 +201,7 @@
 
     function applyInputStatus() {
         UI.children($('inputs-row')).forEach(function (tile) {
-            tile._dot.classList.toggle('on', state.hdmi[tile._item.hdmi] === true);
+            if (tile._dot) tile._dot.classList.toggle('on', state.hdmi[tile._item.hdmi] === true);
         });
     }
 
@@ -266,6 +283,21 @@
             }
         }).catch(function (err) {
             UI.toast('Could not switch to ' + item.label + ': ' + DevLog.errorText(err));
+        });
+    }
+
+    var openingLiveTv = false;
+    function openLiveTv() {
+        if (openingLiveTv) return;
+        openingLiveTv = true;
+        UI.toast('Apertura TV in diretta…');
+        var method = cfg.liveTv && cfg.liveTv.method || 'switch+viewer';
+        runLogged('TV in diretta', Inputs.openTv(method)).then(function (result) {
+            openingLiveTv = false;
+            if (result === 'inapp') enterTvMode();
+        }, function (err) {
+            openingLiveTv = false;
+            UI.toast('Impossibile aprire la TV in diretta: ' + DevLog.errorText(err));
         });
     }
 
@@ -427,6 +459,7 @@
                 if (item.kind === 'app') launchApp(item);
                 else if (item.kind === 'all') UI.show('all');
                 else if (item.kind === 'input') openInput(item);
+                else if (item.kind === 'live-tv') openLiveTv();
                 else if (item.kind === 'settings') UI.show('settings');
             },
             // App-only edition: a real Back press can leave it without any Home remapping.

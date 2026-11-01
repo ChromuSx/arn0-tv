@@ -98,3 +98,56 @@ test('diagnostics distinguish the configured profile from actual firmware eviden
     c.Device.exit();
     assert.equal(exited, true);
 });
+
+
+test('live TV selects the reported tuner, preserves its number and opens the native viewer', async () => {
+    const calls = [];
+    const tuner = { type: 'TV', number: 7 };
+    const c = browser(['apps.js', 'inputs.js'], {
+        tizen: {
+            application: { launch(id, ok) { calls.push(id); ok(); } },
+            systeminfo: { getPropertyValue(kind, ok) { ok({ connected: [{ type: 'HDMI', number: 1 }, tuner] }); } },
+            tvwindow: { setSource(source, ok) { calls.push(source); ok(); } }
+        }
+    });
+    assert.equal(await c.Inputs.openTv(), 'external');
+    assert.equal(calls[0], tuner);
+    assert.equal(calls[1], 'org.tizen.tv-viewer');
+});
+
+test('live TV opens the video plane when the firmware lacks the native viewer id', async () => {
+    const calls = [];
+    const c = browser(['apps.js', 'inputs.js'], {
+        tizen: {
+            application: { launch(id, ok, error) { calls.push('viewer'); error({ message: 'Not found' }); } },
+            systeminfo: { getPropertyValue(kind, ok) { ok({ disconnected: [{ type: 'TV', number: 0 }] }); } },
+            tvwindow: {
+                setSource(source, ok) { calls.push(source.type); ok(); },
+                show(ok, error, rectangle) { calls.push(Array.from(rectangle)); ok(); }
+            }
+        }
+    });
+    assert.equal(await c.Inputs.openTv(), 'inapp');
+    assert.deepEqual(calls, ['TV', 'viewer', ['0px', '0px', '1920px', '1080px']]);
+    c.tizen.tvwindow.show = (ok, err) => err({ message: 'Video plane denied' });
+    await assert.rejects(c.Inputs.openTv(), e => e.message === 'Video plane denied');
+});
+
+test('live TV refuses an absent tuner or denied source without launching another input', async () => {
+    let changed = false;
+    let launched = false;
+    const c = browser(['apps.js', 'inputs.js'], {
+        tizen: {
+            application: { launch() { launched = true; } },
+            systeminfo: { getPropertyValue(kind, ok) { ok({ connected: [{ type: 'HDMI', number: 1 }] }); } },
+            tvwindow: { setSource() { changed = true; } }
+        }
+    });
+    await assert.rejects(c.Inputs.openTv(), /sintonizzatore TV/);
+    assert.equal(changed, false);
+    assert.equal(launched, false);
+    c.tizen.systeminfo.getPropertyValue = (kind, ok) => ok({ connected: [{ type: 'TV', number: 1 }] });
+    c.tizen.tvwindow.setSource = (source, ok, err) => err({ message: 'Source denied' });
+    await assert.rejects(c.Inputs.openTv(), e => e.message === 'Source denied');
+    assert.equal(launched, false);
+});

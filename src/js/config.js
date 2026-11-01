@@ -28,6 +28,8 @@ window.LAUNCHER_CONFIG = {
         { hdmi: 2, label: 'HDMI 2', brand: '' }
     ],
 
+    // Independent of saved HDMI preferences, so existing installations get the new shortcut.
+    liveTv: { label: 'TV in diretta', method: 'switch+viewer' },
     hdmiPorts: [1, 2],
     device: {
         model: 'UE55NU7093UXXH',

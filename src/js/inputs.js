@@ -1,4 +1,4 @@
-/* HDMI inputs via tizen.systeminfo (VIDEOSOURCE) and tizen.tvwindow. */
+/* HDMI and the broadcast tuner via public VIDEOSOURCE / TVWindow APIs. */
 (function () {
     'use strict';
 
@@ -48,6 +48,15 @@
         });
     }
 
+    function findTv() {
+        return sources().then(function (info) {
+            var all = (info.connected || []).concat(info.disconnected || []);
+            var src = all.find(function (s) { return s.type === 'TV'; });
+            if (!src) throw new Error('Il sintonizzatore TV non è disponibile tra le sorgenti del televisore');
+            return src;
+        });
+    }
+
     function setSource(src) {
         return call(function (ok, err) { tizen.tvwindow.setSource(src, ok, err, 'MAIN'); }, 'Switch input');
     }
@@ -65,8 +74,8 @@
     }
 
     // Resolves to 'inapp' when the input is now showing inside the launcher, otherwise 'external'.
-    function open(hdmi, method) {
-        return findHdmi(hdmi).then(function (src) {
+    function openSource(selection, method) {
+        return selection.then(function (src) {
             return setSource(src).then(function () {
                 if (method === 'switch') return 'external';
                 if (method === 'inapp') return showFull().then(function () { return 'inapp'; });
@@ -79,12 +88,28 @@
         });
     }
 
+    function open(hdmi, method) {
+        return openSource(findHdmi(hdmi), method);
+    }
+
+    function openTv(method) {
+        return openSource(findTv(), method || 'switch+viewer').then(function (result) {
+            // Some firmware lacks the viewer app id. Display the tuner via the public video
+            // plane instead, so the shortcut still opens TV with one OK press. Back returns Home.
+            if (result === 'source-selected') {
+                return showFull().then(function () { return 'inapp'; });
+            }
+            return result;
+        });
+    }
+
     window.Inputs = {
         sources: sources,
         hdmiStatus: hdmiStatus,
         current: current,
         describeSource: describeSource,
         open: open,
+        openTv: openTv,
         hide: hide,
         openViewer: openViewer
     };

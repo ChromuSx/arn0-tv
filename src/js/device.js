@@ -43,7 +43,7 @@
         root.classList.toggle('legacy-layout', profile.legacyLayout === true || !supports('display', 'grid'));
         root.classList.toggle('reduced-motion', profile.reducedMotion === true);
         // Translate the main static headings only; the upstream settings remain in English.
-        document.querySelector('#inputs-section h2').textContent = 'Ingressi HDMI';
+        document.querySelector('#inputs-section h2').textContent = window.LAUNCHER_CONFIG.liveTv === false ? 'Ingressi HDMI' : 'TV e ingressi';
         document.querySelector('#all h1').textContent = 'Tutte le app';
         document.querySelector('#settings h1').textContent = 'Impostazioni';
         document.querySelector('#consoles h1').textContent = 'Ingressi HDMI';

@@ -1,6 +1,6 @@
 # Putting it on a TV
 
-> **NU7093 edition:** use [NU7093-IT.md](NU7093-IT.md) for this checkout.
+> **NU7093 edition:** use [NU7093.md](NU7093.md) for this checkout.
 > The native procedure below is preserved as upstream reference for its Q70B only.
 > Do not run or weaken those firmware guards on the NU7093.
 
