@@ -32,10 +32,13 @@
     }
 
     function exit() {
-        // Close this app through the public API. The physical Home key retains Samsung Home.
-        // Do not assume the Q70B's internal Smart Hub app id exists on a 2018 TV.
-        try { tizen.application.getCurrentApplication().exit(); }
-        catch (e) { UI.toast('Premi Home sul telecomando per tornare alla TV Samsung.'); }
+        function close() {
+            try { tizen.application.getCurrentApplication().exit(); }
+            catch (e) { UI.toast('Premi Home sul telecomando per aprire il menu Samsung.'); }
+        }
+        // Leave two minutes to use Samsung's menus before another Home/SOURCE return.
+        if (window.HomeReturn && !window.__TIZEN_MOCK__) HomeReturn.pause().then(close, close);
+        else close();
     }
 
     function init() {
@@ -48,7 +51,7 @@
         document.querySelector('#settings h1').textContent = 'Impostazioni';
         document.querySelector('#consoles h1').textContent = 'Ingressi HDMI';
         document.title = 'Arn0 NU7093';
-        DevLog.log('Profilo ' + profile.model + ': avvio manuale, Home Samsung invariata');
+        DevLog.log('Profile ' + profile.model + ': TV-local Home return service');
     }
 
     window.Device = { init: init, report: report, exit: exit };

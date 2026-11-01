@@ -1,5 +1,6 @@
 # build output
 dist/
+src/services/home-return-token.js
 *.wgt
 *.tpk
 .buildResult/

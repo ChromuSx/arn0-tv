@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build an unsigned Tizen widget on Windows/macOS/Linux with the standard library."""
 import re
+import secrets
 import subprocess
 import sys
 import tempfile
@@ -37,11 +38,19 @@ def build():
     # Build to a temporary file so a failed build cannot replace a working package.
     with tempfile.TemporaryDirectory(dir=OUT.parent) as folder:
         pending = Path(folder) / OUT.name
+        token = secrets.token_hex(24)
         with zipfile.ZipFile(pending, 'w', compression=zipfile.ZIP_DEFLATED) as widget:
+            widget.writestr('services/home-return-token.js', 'module.exports="' + token + '";\n')
             for source in sorted(SRC.rglob('*')):
                 relative = source.relative_to(SRC)
                 if source.is_file() and include(relative):
-                    widget.write(source, relative.as_posix())
+                    if relative.as_posix() == 'index.html':
+                        html = source.read_text(encoding='utf-8')
+                        if html.count('/* HOME_RETURN_TOKEN */') != 1:
+                            raise ValueError('Missing Home return token placeholder')
+                        widget.writestr('index.html', html.replace('/* HOME_RETURN_TOKEN */', 'window.ARN0_HOME_TOKEN="' + token + '";'))
+                    elif relative.as_posix() != 'services/home-return-token.js':
+                        widget.write(source, relative.as_posix())
             if not (SRC / 'js' / 'config.local.js').exists():
                 widget.writestr('js/config.local.js', '/* No local overrides. */\n')
         with zipfile.ZipFile(pending) as widget:

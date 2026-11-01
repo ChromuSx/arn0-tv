@@ -9,8 +9,12 @@ Samsung UE55NU7093UXXH (2018), Tizen 4.0, firmware 1400.2.
 > tuned on the TV without a server. Installation and launch succeeded on the real TV;
 > the user confirmed terrestrial channel playback and channel changes. Earlier 0.6.13 checks
 > confirmed the screen, arrow navigation, app launch with OK and HDMI buttons.
-> Home keeps Samsung's original bar. See the [measured Home-button limitations](docs/NU7093.md#device-checks-on-2026-11-01).
-> Open the launcher manually from the app list.
+> Version 0.6.15 adds a **TV-local Home/SOURCE return service**, without root or an
+> external server. Both keys share the same measured signal on this firmware. The owner
+> verified return from live TV, another app and Arn0 itself, plus continuous Home/SOURCE
+> behavior and the two-minute Samsung-menu escape. See the [Home controls and reboot
+> status](docs/NU7093.md#home-and-source-in-version-0615). Home also passed a full-reboot test
+> with the PC developer connection closed. Version 0.6.16 fixes rapid repeat presses and status refresh.
 > The Q70B results and limitations below belong to the original project.
 > Do not run the `native/` helpers on the NU7093.
 
@@ -30,8 +34,9 @@ and nothing else.
 I built this for one TV in my living room, a Samsung Q70B on Tizen 6.5, because its own home
 screen had become a shop. It does what I want: the apps I use, the consoles I own, driven by the normal remote. I am sharing it as a starting point rather than a product.
 
-**Use it at your own risk.** The optional Home-button setup changes TV preferences that Samsung
-does not document. See [the setup guide](docs/setup-tv.md) before using it.
+The upstream Q70B Home-button procedure below changes undocumented TV preferences.
+The NU7093 service described above uses a separate read-only detection method; follow
+[the NU7093 guide](docs/NU7093.md) for this checkout.
 
 ## Recommended approach
 

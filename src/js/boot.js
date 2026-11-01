@@ -13,6 +13,7 @@
     window.addEventListener('resize', fitPreview);
 
     Device.init();
+    HomeReturn.init();
     UI.init();
     Settings.init();
     Screensaver.init();

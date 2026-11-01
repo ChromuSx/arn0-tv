@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Arn0 Home Probe</title>
+<meta name="viewport" content="width=1920,height=1080">
+<style>body{background:#10212d;color:#fff;font:30px sans-serif;margin:72px}h1{font-size:54px}pre{font:24px monospace;white-space:pre-wrap;max-height:700px;overflow:hidden}small{color:#bbcbd3}</style>
+</head><body><h1>Arn0 Home signal probe</h1>
+<p>Diagnostic trial. The service stops after ten minutes.</p>
+<p id="state">Starting the local diagnostic service...</p><pre id="detail"></pre>
+<small>Back closes this test. An explicitly armed trial may open Arn0 once after Home or SOURCE.</small>
+<script src="probe-token.js"></script>
+<script>
+(function () {
+    'use strict';
+    var attempts = 0;
+    var closing = false;
+    function poll() {
+        if (closing) return;
+        var request = new XMLHttpRequest();
+        request.open('GET', 'http://127.0.0.1:8131/status?token=' + window.ARN0_PROBE_TOKEN, true);
+        request.timeout = 1800;
+        request.onload = function () {
+            if (request.status !== 200) return;
+            try {
+                var state = JSON.parse(request.responseText);
+                if (state.fatalStartupError) {
+                    document.getElementById('state').textContent = 'Diagnostic startup failed: ' + state.fatalStartupError;
+                    document.getElementById('detail').textContent = state.stack;
+                    return;
+                }
+                document.getElementById('state').textContent = 'Service running on ' + state.node + ' (UID ' + state.uid + ')';
+                document.getElementById('detail').textContent = JSON.stringify({ tools: state.tools, latest: state.samples.slice(-1) }, null, 2);
+            } catch (error) { document.getElementById('state').textContent = 'Invalid diagnostic response'; }
+        };
+        request.onerror = request.ontimeout = function () {
+            if (++attempts > 6) document.getElementById('state').textContent = 'The diagnostic service is not answering';
+        };
+        request.send();
+    }
+    try {
+        tizen.application.launch('Arn0Probe1.Watch', function () { poll(); }, function (error) {
+            document.getElementById('state').textContent = 'Service launch failed: ' + error.name + ' ' + error.message;
+        });
+    } catch (error) { document.getElementById('state').textContent = String(error); }
+    setInterval(poll, 2000);
+    document.addEventListener('keydown', function (event) {
+        if (event.keyCode !== 10009) return;
+        event.preventDefault();
+        if (closing) return;
+        closing = true;
+        var request = new XMLHttpRequest();
+        request.open('POST', 'http://127.0.0.1:8131/stop?token=' + window.ARN0_PROBE_TOKEN, true);
+        request.timeout = 1200;
+        var exited = false;
+        function exit() { if (exited) return; exited = true; tizen.application.getCurrentApplication().exit(); }
+        request.onload = request.onerror = request.ontimeout = exit;
+        setTimeout(exit, 1800);
+        request.send();
+    });
+})();
+</script></body></html>

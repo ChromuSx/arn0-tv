@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets"
-        id="http://arn0.tv/launcher" version="0.6.14" viewmodes="maximized">
+        id="http://arn0.tv/launcher" version="0.6.16" viewmodes="maximized">
     <!-- package must be exactly 10 alphanumeric characters -->
-    <!-- KEEP THIS APPLICATION ID STABLE: the TV's Home-button mapping targets it directly.
-         Changing it can leave Home pointing to an app ID that is no longer installed. -->
+    <!-- Keep this ID stable for installed preferences and the TV-local Home service. -->
     <tizen:application id="Arn0Lnchr0.Launcher" package="Arn0Lnchr0" required_version="4.0"/>
     <content src="index.html"/>
     <icon src="icon.png"/>
@@ -19,7 +18,15 @@
     <tizen:privilege name="http://tizen.org/privilege/internet"/>
     <access origin="*" subdomains="true"/>
 
-    <!-- This edition is opened manually. Home and power-on preferences are left to the TV. -->
+    <feature name="http://tizen.org/feature/web.service"/>
+    <tizen:privilege name="http://tizen.org/privilege/filesystem.read"/>
+    <tizen:privilege name="http://tizen.org/privilege/filesystem.write"/>
+    <!-- Requests service startup after reboot; a Partner certificate is required. -->
+    <tizen:service id="Arn0Lnchr0.HomeWatch" auto-restart="false" on-boot="true">
+        <tizen:content src="services/home-return-service.js"/>
+        <tizen:name>Arn0 Home Return Service</tizen:name>
+        <tizen:description>TV-local Home and SOURCE return for the tested NU7093 build.</tizen:description>
+    </tizen:service>
 
     <tizen:profile name="tv-samsung"/>
     <tizen:setting screen-orientation="landscape" context-menu="disable"

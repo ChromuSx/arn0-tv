@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets"
+        id="http://arn0.tv/home-probe" version="0.0.7" viewmodes="maximized">
+    <tizen:application id="Arn0Probe1.Probe" package="Arn0Probe1" required_version="4.0"/>
+    <content src="index.html"/>
+    <icon src="icon.png"/>
+    <name>Arn0 Home Probe</name>
+    <feature name="http://tizen.org/feature/screen.size.normal.1080.1920"/>
+    <feature name="http://tizen.org/feature/web.service"/>
+    <access origin="http://127.0.0.1:8131"/>
+    <tizen:privilege name="http://tizen.org/privilege/internet"/>
+    <tizen:privilege name="http://tizen.org/privilege/application.launch"/>
+    <tizen:privilege name="http://tizen.org/privilege/application.info"/>
+    <tizen:privilege name="http://tizen.org/privilege/filesystem.read"/>
+    <tizen:service id="Arn0Probe1.Watch" auto-restart="false" on-boot="false">
+        <tizen:content src="service.js"/>
+        <tizen:name>Arn0 Home Signal Probe</tizen:name>
+        <tizen:description>Read-only probe. Stops automatically after ten minutes.</tizen:description>
+    </tizen:service>
+    <tizen:profile name="tv-samsung"/>
+    <tizen:setting screen-orientation="landscape" context-menu="disable" background-support="disable"
+        encryption="disable" install-location="auto" hwkey-event="enable"/>
+</widget>

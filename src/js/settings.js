@@ -87,13 +87,22 @@
                 var items = UI.children(list);
                 return twoColumn ? columnRows(items) : items.map(function (li) { return [li]; });
             },
-            onShow: render,
+            onShow: function () {
+                render();
+                if (name === 'settings') HomeReturn.refresh().then(function () {
+                    if (UI.isVisible(name)) { render(); UI.refresh(); }
+                }).catch(function () {});
+            },
             activate: function (item) { item.run(); },
             hints: hints
         });
         return render;
     }
 
+    var renderOverview;
+    function toggleHomeReturn() {
+        HomeReturn.toggle().then(function () { renderOverview(); UI.refresh(); }).catch(function (error) { UI.toast(error.message); });
+    }
     var opening = false;
     function openSamsungHome() {
         if (window.LAUNCHER_CONFIG.device && window.LAUNCHER_CONFIG.device.manualLaunchOnly) {
@@ -129,7 +138,8 @@
             { label: 'Appearance', value: Appearance.font(a.font).label + ' · ' + (a.clock === '12h' ? '12-hour' : '24-hour'), run: function () { UI.show('appearance'); } },
             { label: 'Navigation sound', value: soundSummary(), run: function () { UI.show('sound-settings'); } },
             { label: 'Screen saver', value: screensaverSummary(), run: function () { UI.show('screensaver-settings'); } },
-            { label: 'Chiudi launcher', value: 'Home Samsung sul telecomando', run: openSamsungHome },
+            { label: 'Home button', value: HomeReturn.summary(), run: toggleHomeReturn },
+            { label: 'Samsung Home', value: 'Pause Home return for 2 minutes', run: openSamsungHome },
             { label: 'Advanced', value: 'Refresh, reset, Lab', run: function () { UI.show('advanced'); } }
         ];
     }
@@ -689,7 +699,7 @@
     // ---------- Registration
 
     function init() {
-        registerList('settings', overviewEntries,
+        renderOverview = registerList('settings', overviewEntries,
             [['OK', 'Change'], ['◀ ▶', 'Switch column'], ['Back', 'Home']], true);
         registerList('advanced', advancedEntries, [['OK', 'Run'], ['Back', 'Settings']]);
         renderConsoles = registerList('consoles', consoleEntries,
